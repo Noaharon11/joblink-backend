@@ -11,8 +11,8 @@ POST {{baseUrl}}/api/users/register
 Content-Type: application/json
 
 {
-  "name": "Noa Aharon",
-  "email": "noa@example.com",
+  "name": "Noaaaa",
+  "email": "noaaaaa@example.com",
   "password": "Secret123!",
   "phone": "050-1234567",
   "location": "Tel Aviv",
@@ -83,7 +83,7 @@ Content-Type: application/json
 Authorization: Bearer {{token}}
 
 {
-  "jobId": "691bf03e31ff25f6752be1f4"
+  "jobId": "691bf6ecc3fcb13ea053be97"
 }
 
 
@@ -94,7 +94,7 @@ Content-Type: application/json
 Authorization: Bearer {{token}}
 
 {
-  "jobId": "691bf03e31ff25f6752be1f4"
+  "jobId": "691bf6ecc3fcb13ea053be97"
 }
 
 
@@ -102,3 +102,15 @@ Authorization: Bearer {{token}}
 GET {{baseUrl}}/api/match/my-likes
 Authorization: Bearer {{token}}
 
+### Get my matches (protected)
+GET {{baseUrl}}/api/match/my-matches
+Authorization: Bearer {{token}}
+
+### Get likes for a specific job as employer (protected)
+GET {{baseUrl}}/api/match/job/691bf6ecc3fcb13ea053be97/likes
+Authorization: Bearer {{token}}
+
+### Approve a match as employer (protected)
+# Use a match _id from /match/job/:jobId/likes
+POST {{baseUrl}}/api/match/approve/691bf70cc3fcb13ea053be9b
+Authorization: Bearer {{token}}
