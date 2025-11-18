@@ -14,7 +14,7 @@ const matchSchema = new mongoose.Schema(
     },
     status: {
       type: String,
-      enum: ["like", "dislike"],
+      enum: ["like", "dislike", "matched"],
       required: true,
     },
   },
