@@ -1,0 +1,20 @@
+{
+  "name": "joblink",
+  "version": "1.0.0",
+  "description": "This is a project 'joblink' that help people looking for jobs and also helping companies to hairing",
+  "license": "ISC",
+  "author": "Noa Aharon",
+  "type": "commonjs",
+  "main": "app.js",
+  "scripts": {
+    "start": "node app.js",
+    "dev": "nodemon app.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "dependencies": {
+    "express": "^5.1.0"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.11"
+  }
+}
