@@ -1,6 +1,28 @@
-const mongoose = require("mongoose");
+import mongoose, { Schema, Document, Model, Types } from "mongoose";
 
-const jobSchema = new mongoose.Schema(
+export type JobType =
+  | "full-time"
+  | "part-time"
+  | "student"
+  | "freelance"
+  | "intern";
+
+export interface IJob extends Document {
+  title: string;
+  company: string;
+  description: string;
+  location: string;
+  type: JobType;
+  salaryMin?: number;
+  salaryMax?: number;
+  requiredSkills: string[];
+  createdBy: Types.ObjectId;
+  isActive: boolean;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+const jobSchema = new Schema<IJob>(
   {
     title: {
       type: String,
@@ -19,6 +41,7 @@ const jobSchema = new mongoose.Schema(
     location: {
       type: String,
       required: true,
+      trim: true,
     },
     type: {
       type: String,
@@ -38,8 +61,8 @@ const jobSchema = new mongoose.Schema(
       },
     ],
     createdBy: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "User", // user who created the job
+      type: Schema.Types.ObjectId,
+      ref: "User",
       required: true,
     },
     isActive: {
@@ -48,10 +71,10 @@ const jobSchema = new mongoose.Schema(
     },
   },
   {
-    timestamps: true, // adds createdAt and updatedAt
+    timestamps: true,
   }
 );
 
-const Job = mongoose.model("Job", jobSchema);
+const Job: Model<IJob> = mongoose.model<IJob>("Job", jobSchema);
 
-module.exports = Job;
+export default Job;

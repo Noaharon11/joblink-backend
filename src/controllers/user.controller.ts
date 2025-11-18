@@ -1,8 +1,9 @@
-const userService = require("../services/user.service");
-const User = require("../models/user.model");
+import { Request, Response } from "express";
+import User from "../models/user.model";
+import * as userService from "../services/user.service";
 
 // POST /api/users/register
-async function registerUser(req, res) {
+export const registerUser = async (req: Request, res: Response) => {
   try {
     const userData = req.body;
     const newUser = await userService.registerUser(userData);
@@ -12,7 +13,7 @@ async function registerUser(req, res) {
       data: newUser,
       message: "User registered successfully",
     });
-  } catch (error) {
+  } catch (error: any) {
     console.error("Error in registerUser controller:", error.message);
 
     const statusCode = error.statusCode || 400;
@@ -22,14 +23,22 @@ async function registerUser(req, res) {
       message: error.message || "Failed to register user",
     });
   }
-}
+};
 
 // GET /api/users/me (protected)
-async function getMe(req, res) {
+export const getMe = async (req: Request, res: Response) => {
   try {
-    const userId = req.user.id;
+    const userId = req.user?.id;
+
+    if (!userId) {
+      return res.status(401).json({
+        success: false,
+        message: "User not authenticated",
+      });
+    }
 
     const user = await User.findById(userId).select("-password");
+
     if (!user) {
       return res.status(404).json({
         success: false,
@@ -41,7 +50,7 @@ async function getMe(req, res) {
       success: true,
       data: user,
     });
-  } catch (error) {
+  } catch (error: any) {
     console.error("Error in getMe controller:", error.message);
 
     return res.status(500).json({
@@ -49,9 +58,4 @@ async function getMe(req, res) {
       message: "Failed to fetch user data",
     });
   }
-}
-
-module.exports = {
-  registerUser,
-  getMe,
 };
