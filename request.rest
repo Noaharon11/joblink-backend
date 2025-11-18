@@ -1,9 +1,13 @@
-###
+@baseUrl = http://localhost:3000
+@token = {{token}}
 
-GET http://localhost:3000/health
 
-### User Registration
-POST http://localhost:3000/api/users/register
+### Health check
+GET {{baseUrl}}/health
+
+
+### Register new user
+POST {{baseUrl}}/api/users/register
 Content-Type: application/json
 
 {
@@ -24,9 +28,8 @@ Content-Type: application/json
 }
 
 
-### User Login 
-
-POST http://localhost:3000/api/auth/login
+### Login (get JWT token)
+POST {{baseUrl}}/api/auth/login
 Content-Type: application/json
 
 {
@@ -35,7 +38,67 @@ Content-Type: application/json
 }
 
 
+### Set token manually after login
+# Copy the "token" value from the login response and paste it here:
+@token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2OTFiZTA2MzhjZjFjY2FlYTRlMDNmOGQiLCJpYXQiOjE3NjM0Mzg2MTksImV4cCI6MTc2MzQ0MjIxOX0.2IL-xxZLOirxGTeur06hTGwZQ5duGz0AymytYk34zew
 
-### Get Logged In User
-GET http://localhost:3000/api/users/me
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2OTFiZTA2MzhjZjFjY2FlYTRlMDNmOGQiLCJpYXQiOjE3NjM0MzYwMTcsImV4cCI6MTc2MzQzOTYxN30.lRr86CdFBs9V3aCx--CsJmZJF1PWMHvdvW2401k1wyA
+
+### Get current logged-in user (protected)
+GET {{baseUrl}}/api/users/me
+Authorization: Bearer {{token}}
+
+
+### Create a new job (protected)
+POST {{baseUrl}}/api/jobs
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+  "title": "Junior Backend Developer",
+  "company": "Awesome Startup",
+  "description": "We are looking for a motivated junior backend developer to join our team.",
+  "location": "Tel Aviv",
+  "type": "full-time",
+  "salaryMin": 15000,
+  "salaryMax": 22000,
+  "requiredSkills": ["Node.js", "TypeScript", "MongoDB"]
+}
+
+
+### Get all jobs (public)
+GET {{baseUrl}}/api/jobs
+
+
+### Get jobs filtered by location (public)
+GET {{baseUrl}}/api/jobs?location=Tel%20Aviv
+
+
+### Get single job by id (public)
+# Replace <JOB_ID_HERE> with a real id from the jobs list
+GET {{baseUrl}}/api/jobs/691bf03e31ff25f6752be1f4
+
+### Like a job (protected)
+POST {{baseUrl}}/api/match/like
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+  "jobId": "691bf03e31ff25f6752be1f4"
+}
+
+
+
+### Dislike a job (protected)
+POST {{baseUrl}}/api/match/dislike
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+  "jobId": "691bf03e31ff25f6752be1f4"
+}
+
+
+### Get my liked jobs (protected)
+GET {{baseUrl}}/api/match/my-likes
+Authorization: Bearer {{token}}
+
