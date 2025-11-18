@@ -24,3 +24,18 @@ Content-Type: application/json
 }
 
 
+### User Login 
+
+POST http://localhost:3000/api/auth/login
+Content-Type: application/json
+
+{
+  "email": "noa@example.com",
+  "password": "Secret123!"
+}
+
+
+
+### Get Logged In User
+GET http://localhost:3000/api/users/me
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2OTFiZTA2MzhjZjFjY2FlYTRlMDNmOGQiLCJpYXQiOjE3NjM0MzYwMTcsImV4cCI6MTc2MzQzOTYxN30.lRr86CdFBs9V3aCx--CsJmZJF1PWMHvdvW2401k1wyA

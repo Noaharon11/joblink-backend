@@ -12,6 +12,7 @@ app.use(express.json());
 // Routes imports
 const jobsRouter = require("./src/routes/job.routes");
 const usersRouter = require("./src/routes/user.routes");
+const authRouter = require("./src/routes/auth.routes");
 
 // Health check route
 app.get("/health", (req, res) => {
@@ -24,6 +25,7 @@ app.get("/health", (req, res) => {
 // Main API routes
 app.use("/api/jobs", jobsRouter);
 app.use("/api/users", usersRouter);
+app.use("/api/auth", authRouter);
 
 // Start server only after DB connection
 connectDB().then(() => {
