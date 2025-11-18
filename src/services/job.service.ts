@@ -1,6 +1,26 @@
-const Job = require("../models/job.model");
+import Job, { IJob, JobType } from "../models/job.model";
 
-async function createJob(jobData, userId) {
+export interface CreateJobInput {
+  title: string;
+  company: string;
+  description: string;
+  location: string;
+  type?: JobType;
+  salaryMin?: number;
+  salaryMax?: number;
+  requiredSkills?: string[];
+}
+
+export interface JobFilters {
+  location?: string;
+  type?: JobType;
+  isActive?: boolean;
+}
+
+export const createJob = async (
+  jobData: CreateJobInput,
+  userId: string
+): Promise<IJob> => {
   const {
     title,
     company,
@@ -16,7 +36,7 @@ async function createJob(jobData, userId) {
     const error = new Error(
       "Title, company, description and location are required"
     );
-    error.statusCode = 400;
+    (error as any).statusCode = 400;
     throw error;
   }
 
@@ -25,18 +45,19 @@ async function createJob(jobData, userId) {
     company,
     description,
     location,
-    type,
+    type: type || "full-time",
     salaryMin,
     salaryMax,
-    requiredSkills,
+    requiredSkills: requiredSkills || [],
     createdBy: userId,
+    isActive: true,
   });
 
   return job;
-}
+};
 
-async function getAllJobs(filters = {}) {
-  const query = {};
+export const getAllJobs = async (filters: JobFilters = {}): Promise<IJob[]> => {
+  const query: any = {};
 
   if (filters.location) {
     query.location = filters.location;
@@ -46,28 +67,22 @@ async function getAllJobs(filters = {}) {
     query.type = filters.type;
   }
 
-  if (filters.isActive !== undefined) {
+  if (typeof filters.isActive !== "undefined") {
     query.isActive = filters.isActive;
   }
 
   const jobs = await Job.find(query).sort({ createdAt: -1 });
   return jobs;
-}
+};
 
-async function getJobById(jobId) {
+export const getJobById = async (jobId: string): Promise<IJob> => {
   const job = await Job.findById(jobId);
 
   if (!job) {
     const error = new Error("Job not found");
-    error.statusCode = 404;
+    (error as any).statusCode = 404;
     throw error;
   }
 
   return job;
-}
-
-module.exports = {
-  createJob,
-  getAllJobs,
-  getJobById,
 };

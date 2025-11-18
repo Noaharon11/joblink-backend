@@ -1,11 +1,19 @@
-const jobService = require("../services/job.service");
+import { Request, Response } from "express";
+import * as jobService from "../services/job.service";
 
 // POST /api/jobs
-async function createJob(req, res) {
+export const createJob = async (req: Request, res: Response) => {
   try {
-    const userId = req.user.id; // from auth middleware
-    const jobData = req.body;
+    const userId = req.user?.id;
 
+    if (!userId) {
+      return res.status(401).json({
+        success: false,
+        message: "User not authenticated",
+      });
+    }
+
+    const jobData = req.body;
     const job = await jobService.createJob(jobData, userId);
 
     return res.status(201).json({
@@ -13,7 +21,7 @@ async function createJob(req, res) {
       data: job,
       message: "Job created successfully",
     });
-  } catch (error) {
+  } catch (error: any) {
     console.error("Error in createJob controller:", error.message);
 
     const statusCode = error.statusCode || 400;
@@ -23,14 +31,14 @@ async function createJob(req, res) {
       message: error.message || "Failed to create job",
     });
   }
-}
+};
 
 // GET /api/jobs
-async function getJobs(req, res) {
+export const getJobs = async (req: Request, res: Response) => {
   try {
     const filters = {
-      location: req.query.location,
-      type: req.query.type,
+      location: req.query.location as string | undefined,
+      type: req.query.type as any,
       isActive:
         typeof req.query.isActive !== "undefined"
           ? req.query.isActive === "true"
@@ -43,7 +51,7 @@ async function getJobs(req, res) {
       success: true,
       data: jobs,
     });
-  } catch (error) {
+  } catch (error: any) {
     console.error("Error in getJobs controller:", error.message);
 
     return res.status(500).json({
@@ -51,19 +59,20 @@ async function getJobs(req, res) {
       message: "Failed to fetch jobs",
     });
   }
-}
+};
 
 // GET /api/jobs/:id
-async function getJobById(req, res) {
+export const getJobById = async (req: Request, res: Response) => {
   try {
     const jobId = req.params.id;
+
     const job = await jobService.getJobById(jobId);
 
     return res.status(200).json({
       success: true,
       data: job,
     });
-  } catch (error) {
+  } catch (error: any) {
     console.error("Error in getJobById controller:", error.message);
 
     const statusCode = error.statusCode || 500;
@@ -73,10 +82,4 @@ async function getJobById(req, res) {
       message: error.message || "Failed to fetch job",
     });
   }
-}
-
-module.exports = {
-  createJob,
-  getJobs,
-  getJobById,
 };
