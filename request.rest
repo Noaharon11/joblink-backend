@@ -1,10 +1,26 @@
 ###
 
-GET http://localhost:3000
-
-
-## Health Check
-
 GET http://localhost:3000/health
+
+### User Registration
+POST http://localhost:3000/api/users/register
+Content-Type: application/json
+
+{
+  "name": "Noa Aharon",
+  "email": "noa@example.com",
+  "password": "Secret123!",
+  "phone": "050-1234567",
+  "location": "Tel Aviv",
+  "skills": ["Node.js", "TypeScript", "MongoDB"],
+  "experience": "2 years as backend developer",
+  "jobPreferences": {
+    "desiredRole": "Backend Developer",
+    "employmentType": "full-time",
+    "workMode": "hybrid",
+    "salaryMin": 18000,
+    "salaryMax": 26000
+  }
+}
 
 
