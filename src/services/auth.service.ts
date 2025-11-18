@@ -1,18 +1,35 @@
-const bcrypt = require("bcryptjs");
-const jwt = require("jsonwebtoken");
-const User = require("../models/user.model");
+import bcrypt from "bcryptjs";
+import User from "../models/user.model";
+import jwt, { SignOptions, Secret } from "jsonwebtoken";
 
-function generateAccessToken(userId) {
-  const secret = process.env.JWT_SECRET;
-  const expiresIn = process.env.JWT_EXPIRES_IN || "1h";
-
-  return jwt.sign({ userId }, secret, { expiresIn });
+interface LoginResult {
+  user: any;
+  token: string;
 }
 
-async function login(email, password) {
+function generateAccessToken(userId: string): string {
+  const secret = process.env.JWT_SECRET;
+
+  if (!secret) {
+    throw new Error("JWT_SECRET is not defined in environment variables");
+  }
+
+  const expiresInEnv = process.env.JWT_EXPIRES_IN || "1h";
+
+  const options: SignOptions = {
+    expiresIn: expiresInEnv as SignOptions["expiresIn"],
+  };
+
+  return jwt.sign({ userId }, secret as Secret, options);
+}
+
+export async function login(
+  email: string,
+  password: string
+): Promise<LoginResult> {
   if (!email || !password) {
     const error = new Error("Email and password are required");
-    error.statusCode = 400;
+    (error as any).statusCode = 400;
     throw error;
   }
 
@@ -20,28 +37,24 @@ async function login(email, password) {
 
   if (!user) {
     const error = new Error("Invalid email or password");
-    error.statusCode = 401;
+    (error as any).statusCode = 401;
     throw error;
   }
 
-  const isMatch = await bcrypt.compare(password, user.password);
+  const isMatch = await bcrypt.compare(password, (user as any).password);
   if (!isMatch) {
     const error = new Error("Invalid email or password");
-    error.statusCode = 401;
+    (error as any).statusCode = 401;
     throw error;
   }
 
   const token = generateAccessToken(user._id.toString());
 
   const userObject = user.toObject();
-  delete userObject.password;
+  delete (userObject as any).password;
 
   return {
     user: userObject,
     token,
   };
 }
-
-module.exports = {
-  login,
-};

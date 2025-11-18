@@ -1,10 +1,14 @@
-const authService = require("../services/auth.service");
+import { Request, Response } from "express";
+import { login as loginService } from "../services/auth.service";
 
-async function login(req, res) {
+export async function login(req: Request, res: Response): Promise<Response> {
   try {
-    const { email, password } = req.body;
+    const { email, password } = req.body as {
+      email: string;
+      password: string;
+    };
 
-    const result = await authService.login(email, password);
+    const result = await loginService(email, password);
 
     return res.status(200).json({
       success: true,
@@ -15,17 +19,22 @@ async function login(req, res) {
       message: "Login successful",
     });
   } catch (error) {
-    console.error("Error in login controller:", error.message);
+    console.error(
+      "Error in login controller:",
+      error instanceof Error ? error.message : error
+    );
 
-    const statusCode = error.statusCode || 400;
+    const statusCode =
+      (error as any)?.statusCode &&
+      typeof (error as any).statusCode === "number"
+        ? (error as any).statusCode
+        : 400;
+
+    const message = error instanceof Error ? error.message : "Failed to login";
 
     return res.status(statusCode).json({
       success: false,
-      message: error.message || "Failed to login",
+      message,
     });
   }
 }
-
-module.exports = {
-  login,
-};
