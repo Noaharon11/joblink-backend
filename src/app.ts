@@ -1,6 +1,7 @@
 import "dotenv/config";
 import express, { Application, Request, Response } from "express";
 import connectDB from "./config/db";
+import cors from "cors";
 
 // Routers (currently written in JS, but TS can import them)
 import jobsRouter from "./routes/job.routes";
@@ -10,6 +11,14 @@ import matchRouter from "./routes/match.routes";
 
 const app: Application = express();
 const port = process.env.PORT || 3000;
+
+// CORS configuration
+app.use(
+  cors({
+    origin: "http://localhost:5173",
+    credentials: true,
+  })
+);
 
 // Global middlewares
 app.use(express.json());
