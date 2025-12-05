@@ -35,3 +35,7 @@ connectDB().then(() => {
     console.log(`JobLink API listening at http://localhost:${port}`);
   });
 });
+
+export function listen(port, arg1) {
+  throw new Error("Function not implemented.");
+}
